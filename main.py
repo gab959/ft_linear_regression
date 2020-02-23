@@ -6,9 +6,6 @@ import matplotlib.pyplot as plt
 import numpy as np
 import sklearn.preprocessing as sk
 
-theta0 = 0
-theta1 = 0
-
 learning_rate = 1
 num_iterations = 1000
 
@@ -17,60 +14,49 @@ data = pd.read_csv("./resources/data.csv")
 scaler = sk.MinMaxScaler()
 points = scaler.fit_transform(np.array(data))
 
-print(scaler.scale_)
-
 kms = points[:,0]
 prices = points[:,1]
-print(kms)
-print(prices)
-
 
 stock_points = np.array(data)
 stock_kms = stock_points[:,0]
 stock_prices = stock_points[:,1]
 
-def estimatePrice(theta0, theta1, km):
-    res = theta1 * km + theta0
+
+def estimatePrice(theta, km):
+    res = theta[1] * km + theta[0]
     return res
 
 
-def gradientStep(learning_rate, theta0, theta1, points):
-    print("GS : ", theta0, theta1)
+def gradientStep(learning_rate, theta, points):
     error = [0, 0]
-    tmp_theta0 = 0
-    tmp_theta1 = 0
+    tmp_theta = [0, 0]
+
     for km, price in points:
-        diff = estimatePrice(theta0, theta1, km) - price
+        diff = estimatePrice(theta, km) - price
         error[0] += diff
         error[1] += diff * km
-    # print(error)
-    tmp_theta0 = learning_rate * error[0] / len(points)
-    tmp_theta1 = learning_rate * error[1] / len(points)
-    print("end gradient tmp :", tmp_theta0, tmp_theta1, "\n\n")
 
-    return theta0 - tmp_theta0, theta1 - tmp_theta1
+    tmp_theta[0] = learning_rate * error[0] / len(points)
+    tmp_theta[1] = learning_rate * error[1] / len(points)
+   
+    # print("GS | tmp_theta : ", tmp_theta[0], tmp_theta[1])
+
+    return theta[0] - tmp_theta[0], theta[1] - tmp_theta[1]
 
 
 def trainProgram(num_iterations):
-    theta0 = 0
-    theta1 = 0
+    theta = [0,0]
     plt.ion()
     for i in range(num_iterations):
-        print("TP | i = ", i, " | Coefs :", theta0, theta1)
-        print(theta0 / scaler.scale_[0])
-        print(theta1 * scaler.scale_[1])
-        # print(scaler.inverse_transform(theta0))
-        # print(scaler.inverse_transform(theta1))
-        newTheta = gradientStep(learning_rate, theta0, theta1, points)
-        theta0 = newTheta[0]
-        theta1 = newTheta[1]
+        theta = gradientStep(learning_rate, theta, points)
+        print("TP | i = ", i," newTheta :", theta)
 
-        if i < 81:
+        if i < 1:
             axes = plt.gca()
             axes.set_xlim([0, max(stock_kms) * 1.1])
             axes.set_ylim([0, max(stock_prices) * 1.1])
             
-            plt.plot(stock_kms, estimatePrice(theta0, theta1, kms) / scaler.scale_[1] + min(stock_prices), '-r', label='estimatePrice(km)')
+            plt.plot(stock_kms, estimatePrice(theta, kms) / scaler.scale_[1] + min(stock_prices), '-r', label='estimatePrice(km)')
             plt.scatter(stock_kms, stock_prices)
         
             # plt.plot(kms, estimatePrice(theta0, theta1, kms), '-r', label='estimatePrice(km)')
@@ -87,18 +73,24 @@ def trainProgram(num_iterations):
             else:
                 plt.draw()
 
-    print("TP END : ", theta0, theta1)
-    return theta0, theta1
+    print("\nThe training of the program is done. \nFinal parameters : ", theta)
+    print("\n------------------------------------------------------------------\n\n")
+    return theta
 
 thetas = trainProgram(num_iterations)
 
 
-print(theta0, theta1)
+# print(theta)
 
 while 1:
-    print("Please type the mileage of the car :")
-    km_in = float(input())
+    print("What is the mileage of the car ?")
+    km_in = input()
+    try:
+        km_in = float(km_in)
+    except ValueError:
+        print("Please type a valid mileage.")
+        continue
     scaled_km_in = scaler.scale_[0] * km_in - min(stock_kms) * scaler.scale_[0]
-    price = estimatePrice(thetas[0], thetas[1], scaled_km_in) / scaler.scale_[1] + min(stock_prices)
-    print("The price of your car is ", price, "€")
+    price = estimatePrice(thetas, scaled_km_in) / scaler.scale_[1] + min(stock_prices)
+    print("The price of your car is ", round(price,2), "€")
     plt.scatter(km_in, price)
