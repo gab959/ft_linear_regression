@@ -1,15 +1,4 @@
-# **************************************************************************** #
-#                                                           LE - /             #
-#                                                               /              #
-#    main.py                                          .::    .:/ .      .::    #
-#                                                  +:+:+   +:    +:  +:+:+     #
-#    By: gaennuye <gaennuye@student.le-101.fr>      +:+   +:    +:    +:+      #
-#                                                  #+#   #+    #+    #+#       #
-#    Created: 2020/01/20 11:05:31 by gaennuye     #+#   ##    ##    #+#        #
-#    Updated: 2020/02/22 17:54:47 by gaennuye    ###    #+. /#+    ###.fr      #
-#                                                          /                   #
-#                                                         /                    #
-# **************************************************************************** #
+#! /usr/bin/env python3
 
 import sys
 import pandas as pd
@@ -20,27 +9,25 @@ import sklearn.preprocessing as sk
 theta0 = 0
 theta1 = 0
 
-learning_rate = 1.2
+learning_rate = 1
 num_iterations = 1000
 
 data = pd.read_csv("./resources/data.csv")
-# data = pd.read_csv("../GradientDescentExample/data.csv")
 
 scaler = sk.MinMaxScaler()
 points = scaler.fit_transform(np.array(data))
 
 print(scaler.scale_)
-sys.exit()
 
 kms = points[:,0]
 prices = points[:,1]
+print(kms)
+print(prices)
 
-# print("points : \n", points, '\n')
 
 stock_points = np.array(data)
 stock_kms = stock_points[:,0]
 stock_prices = stock_points[:,1]
-
 
 def estimatePrice(theta0, theta1, km):
     res = theta1 * km + theta0
@@ -77,22 +64,41 @@ def trainProgram(num_iterations):
         newTheta = gradientStep(learning_rate, theta0, theta1, points)
         theta0 = newTheta[0]
         theta1 = newTheta[1]
-        plt.scatter(stock_kms, stock_prices)
 
-        plt.plot(stock_kms, estimatePrice(theta0, theta1, kms) * 2 / scaler.scale_[1], '-r', label='estimatePrice(km)')
+        if i < 81:
+            axes = plt.gca()
+            axes.set_xlim([0, max(stock_kms) * 1.1])
+            axes.set_ylim([0, max(stock_prices) * 1.1])
+            
+            plt.plot(stock_kms, estimatePrice(theta0, theta1, kms) / scaler.scale_[1] + min(stock_prices), '-r', label='estimatePrice(km)')
+            plt.scatter(stock_kms, stock_prices)
+        
+            # plt.plot(kms, estimatePrice(theta0, theta1, kms), '-r', label='estimatePrice(km)')
+            # plt.scatter(kms, prices)
     
-        plt.xlabel('Km', color='#1C2833')
-        plt.ylabel('Price', color='#1C2833')
-        plt.legend(loc='upper right')
-    
-        plt.grid()
-        plt.pause(0.01)
-        plt.clf()
-    return
-    
-trainProgram(num_iterations)
-#TODO add prompt for user input
-    
-# [240000; 139800; 150500; 185530; 176000; 114800; 166800; 89000; 144500; 84000; 82029; 63060; 74000; 97500; 67000; 76025; 48235; 93000; 60949; 65674; 54000; 68500; 22899; 61789]
-# [3650; 3800; 4400; 4450; 5250; 5350; 5800; 5990; 5999; 6200; 6390; 6390; 6600; 6800; 6800; 6900; 6900; 6990; 7490; 7555; 7990; 7990; 7990; 8290]
-    
+            plt.xlabel('Km', color='#1C2833')
+            plt.ylabel('Price', color='#1C2833')
+            plt.legend(loc='upper right')
+        
+            plt.grid()
+            if i < 80:
+                plt.pause(0.01)
+                plt.clf()
+            else:
+                plt.draw()
+
+    print("TP END : ", theta0, theta1)
+    return theta0, theta1
+
+thetas = trainProgram(num_iterations)
+
+
+print(theta0, theta1)
+
+while 1:
+    print("Please type the mileage of the car :")
+    km_in = float(input())
+    scaled_km_in = scaler.scale_[0] * km_in - min(stock_kms) * scaler.scale_[0]
+    price = estimatePrice(thetas[0], thetas[1], scaled_km_in) / scaler.scale_[1] + min(stock_prices)
+    print("The price of your car is ", price, "€")
+    plt.scatter(km_in, price)
