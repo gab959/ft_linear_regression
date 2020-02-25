@@ -12,3 +12,7 @@ https://www.coursera.org/learn/machine-learning/home/welcome
 Introduction to Gradient Descent and Linear Regression :
 https://spin.atomicobject.com/2014/06/24/gradient-descent-linear-regression/
 https://github.com/mattnedrich/GradientDescentExample
+
+
+Good online calculator (without plot) :
+https://www.graphpad.com/quickcalcs/linear2/
