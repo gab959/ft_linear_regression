@@ -33,6 +33,9 @@ g.parser.add_argument("--plot",
                     action="store_true")
 args = g.parser.parse_args()
 
+if args.plot and args.path is None:
+    g.parser.error("Training of the program is required to plot the data.")
+
 
 # Runs the training of the program only if the -t argument is specified
 
@@ -52,15 +55,18 @@ if args.path is not None:
         sys.exit(1)
 
 
+# Prompt user for mileage
 
 while 1:
     print("What is the mileage of the car?")
-    km_in = input()
+    km_in = input("> ")
+    
     try:
         km_in = float(km_in)
     except ValueError:
         print("Please type a valid mileage.\n")
         continue
+
     if km_in < 0:
         print("Are you drunk?\n")
         continue
@@ -75,6 +81,6 @@ while 1:
     if price < 0:
         print("I'll bring your car to the junkyard if you give me", abs(round(price,2)), "€\n")
     else:
-        print("The price of your car is", round(price,2), "€\n")
+        print("The price of your car is " + str(round(price,2)) + "€\n")
     if plt.fignum_exists(59):
         plt.scatter(km_in, price)
