@@ -1,3 +1,5 @@
+# ft_linear_regression
+
 
 https://www.gerad.ca/Sebastien.Le.Digabel/MTH2302D/12_regression.pdf
 
@@ -15,4 +17,4 @@ https://github.com/mattnedrich/GradientDescentExample
 
 
 Good online calculator (without plot) :
-https://www.graphpad.com/quickcalcs/linear2/
+https://www.graphpad.com/quickcalcs/linear2

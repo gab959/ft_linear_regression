@@ -12,42 +12,49 @@
 #                                                                              #
 # **************************************************************************** #
 
-import header as h
+import os
+import sys
+import _global as g
 import linear
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 
 
-h.init()
+g.init()
 
 
 # Reading the arguments
 
-h.parser.add_argument("-t", "--path", type=str,
+g.parser.add_argument("-t", "--path", type=str,
                     help="Trains the program with the selected dataset")
-h.parser.add_argument("--plot",
+g.parser.add_argument("--plot",
                     help="Enables the visualization of the data",
                     action="store_true")
-args = h.parser.parse_args()
+args = g.parser.parse_args()
 
+
+# Runs the training of the program only if the -t argument is specified
 
 if args.path is not None:
     
-    data = pd.read_csv(args.path)
-    points = h.scaler.fit_transform(np.array(data))
-    
-    stock_points = np.array(data)
+    if os.path.exists(args.path):
+        data = pd.read_csv(args.path)
+        points = g.scaler.fit_transform(np.array(data))
 
-    stock_kms = stock_points[:,0]
-    stock_prices = stock_points[:,1]
-    
-    linear.trainProgram(points, stock_points)
+        stock_points = np.array(data)
+        stock_kms = stock_points[:,0]
+        stock_prices = stock_points[:,1]
+
+        linear.trainProgram(points, stock_kms, stock_prices)
+    else:
+        print("File doesn't exist !")
+        sys.exit(1)
 
 
 
 while 1:
-    print("What is the mileage of the car ?\n")
+    print("What is the mileage of the car?")
     km_in = input()
     try:
         km_in = float(km_in)
@@ -55,13 +62,13 @@ while 1:
         print("Please type a valid mileage.\n")
         continue
     if km_in < 0:
-        print("Are you drunk ?\n")
+        print("Are you drunk?\n")
         continue
 
     #If the program is trained, data must be "de-scaled"
     if args.path is not None:
-        scaled_km_in = h.scaler.scale_[0] * km_in - min(stock_kms) * h.scaler.scale_[0]
-        price = linear.estimatePrice(scaled_km_in) / h.scaler.scale_[1] + min(stock_prices)
+        scaled_km_in = g.scaler.scale_[0] * km_in - min(stock_kms) * g.scaler.scale_[0]
+        price = linear.estimatePrice(scaled_km_in) / g.scaler.scale_[1] + min(stock_prices)
     else:
         price = linear.estimatePrice(km_in)
     
