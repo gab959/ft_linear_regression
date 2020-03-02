@@ -6,7 +6,7 @@
 #    By: gaennuye <gaennuye@student.le-101.fr>      +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/02/29 14:29:06 by gaennuye          #+#    #+#              #
-#    Updated: 2020/03/01 14:49:07 by gaennuye         ###   ########lyon.fr    #
+#    Updated: 2020/03/02 17:15:08 by gaennuye         ###   ########lyon.fr    #
 #                                                                              #
 # **************************************************************************** #
 
@@ -19,6 +19,8 @@ import progressbar
 
 g.init()
 
+
+# Estimating the price depending on the mileage
 
 def estimatePrice(km):
     res = g.theta[1] * km + g.theta[0]
@@ -115,6 +117,5 @@ def trainProgram(points, stock_kms, stock_prices):
 
     diff = calcError(points, stock_prices)
 
-    print("Average error : ", round(sum(diff)/len(diff), 4) * 100, "%") 
-
-    print("\n------------------------------------------------------------------\n\n")
+    print("Average error : ", round(sum(diff)/len(diff), 4) * 100, "%\n") 
+    print("------------------------------------------------------------------\n\n")
