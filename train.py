@@ -61,7 +61,7 @@ if args.reset and (args.path or args.plot):
     g.parser.error("You can't use additional flag when using --reset")
 
 if args.plot and args.path is None:
-    g.parser.error("Training of the program is required to plot the data.")
+    g.parser.error("Please specify a file to train the program to plot the data.")
 
 if args.reset:
     updateConfig(False, 0,0)
@@ -94,12 +94,11 @@ if args.path is not None:
         print("File doesn't exist!")
         sys.exit(1)
 
-if os.path.exists('config.json') is not True:
+else:
     print("Please specify the path of the dataset used to train the program.")
     sys.exit(1)
 
-print("Do you want to run the prediction program? [Y/n]")
-answer = input("> ")
+answer = input("Do you want to run the prediction program? [Y/n] : ")
 
 if answer in {"Y", "y", "yes", "yeah"}:
     print("\n")
