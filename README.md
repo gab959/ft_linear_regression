@@ -25,3 +25,6 @@ Once the training is done, you can then run the prediction program with `python3
 It will ask you for the mileage of your car, and return its estimated value. To quit the program, just type `quit` or `exit` in the prompt.
 
 Please note that the plotting option only works if you specify a path for the training.
+
+
+![alt text](https://raw.githubusercontent.com/gab959/ft_linear_regression/master/resources/sample.png)
